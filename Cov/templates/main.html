@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>疫情防护</title>
+   
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+   	<script src="https://cdn.bootcss.com/echarts/4.2.1-rc1/echarts.min.js"></script>
+   	 <script type="text/javascript" src="../static/js/china.js" ></script>
+   	<script type="text/javascript" src="../static/js/dark.js" ></script>
+   	<script type="text/javascript" src="../static/js/echarts-wordcloud.min.js" ></script>
+
+   	
+   	
+   	<link rel="stylesheet" href="../static/css/index.css" />
+</head>
+<body>
+    <div id="title">全国疫情实时追踪</div>
+    <div id="l1"></div>
+    <div id="l2"></div>
+    <div id="c1">
+    	<div class="num"><h1></h1></div>
+    	<div class="num"><h1></h1></div>
+    	<div class="num"><h1></h1></div>
+    	<div class="num"><h1></h1></div>
+    	<div class="txt">累计确诊</div>
+    	<div class="txt">剩余疑似</div>
+    	<div class="txt">累计治愈</div>
+    	<div class="txt">累计死亡</div>
+    </div>
+    <div id="c2"></div>
+    <div id="r1"></div>
+    <div id="r2"></div>
+    <div id="tim"></div>
+    <script src="../static/js/ec_center.js" ></script>
+    <script type="text/javascript" src="../static/js/ec_left1.js" ></script>
+    <script type="text/javascript" src="../static/js/ec_left2.js" ></script>
+    <script type="text/javascript" src="../static/js/ec_ringht1.js" ></script>
+    <script type="text/javascript" src="../static/js/ec_right2.js" ></script>
+    <script>
+    	function getTime(){
+    		$.ajax({
+    		type:"get",
+    		url: "/time",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			$("#tim").html(data)
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	function get_c1_data(){
+    		$.ajax({
+    		type:"get",
+    		url: "/c1",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			$(".num h1").eq(0).text(data.confirm);
+    			$(".num h1").eq(1).text(data.suspect);
+    			$(".num h1").eq(2).text(data.heal);
+    			$(".num h1").eq(3).text(data.dead);
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	function get_c2_data(){
+    		$.ajax({
+    		type:"get",
+    		url: "/c2",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			ec_center_option.series[0].data = data.data
+    			ec_center.setOption(ec_center_option)
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	function get_l1_data(){
+    		$.ajax({
+    		type:"get",
+    		url: "/l1",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			console.log("===========data===>"+data.confirm,data.day,data.suspect)
+    			ec_left1_Option.xAxis[0].data = data.day
+    			ec_left1_Option.series[0].data = data.confirm
+    			ec_left1_Option.series[1].data = data.suspect
+    			ec_left1_Option.series[2].data = data.heal
+    			ec_left1_Option.series[3].data = data.dead
+    			
+    			ec_left1.setOption(ec_left1_Option)
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	function get_l2_data(){
+    		$.ajax({
+    		type:"get",
+    		url: "/l2",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			ec_left2_Option.xAxis[0].data = data.day
+    			ec_left2_Option.series[0].data = data.confirm_add
+    			ec_left2_Option.series[1].data = data.suspect_add
+    			
+    			
+    			ec_left2.setOption(ec_left2_Option)
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	function get_r1_data(){
+    		$.ajax({
+    		type:"get",
+    		url: "/r1",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			console.log("=============city=====>>",data.city)
+    			console.log("=============confirm=====>>",data.confirm)
+    			ec_right1_option.xAxis.data = data.city
+    			ec_right1_option.series[0].data = data.confirm
+
+    			
+    			
+    			ec_right1.setOption(ec_right1_option)
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	function get_r2_data(){
+    		$.ajax({
+    		type:"get",
+    		url: "/r2",
+    		timeout: 10000,
+    		async:true,
+    		success: function(data){
+    			ec_right2_option.series[0].data = data.kws
+
+    			
+    			
+    			ec_right2.setOption(ec_right2_option)
+    		},
+    		error: function(xhr,type,errorThrown){
+    			
+    		}
+    	});
+    	}
+    	console.log("==============>",'rgb('+
+						Math.round(Math.random() * 255) +
+						","+Math.round(Math.random() * 255) +
+						","+Math.round(Math.random() * 255) +")");
+    	get_r2_data();
+    	get_r1_data();
+    	get_l1_data();
+    	get_l2_data();
+    	get_c2_data();
+    	get_c1_data();
+    	getTime();
+    	setInterval(getTime,1000)
+    	setInterval(get_c1_data,1000)
+    </script>
+</body>
+</html>
